@@ -1,27 +1,26 @@
 //Packges
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const app = require("./app");
 
-const app = express();
-const PORT = 3001;
+dotenv.config({ path: "./config.env" });
 
-//Middlewares
-app.use(cors());
+//Data Base connection
+const DB = process.env.DATABASE;
 
-app.get("/api/currency", async (req, res) => {
+const connectDB = async () => {
   try {
-    const response = await axios.get(
-      "https://api.hitbtc.com/api/3/public/currency"
-    );
-    res.json(response.data);
-    console.log();
-  } catch (error) {
-    console.log("Error fatching data from HitBTC", error);
-    res.status(500).send("Error fetching data");
+    mongoose.connect(DB);
+    console.log("Database Connected");
+  } catch (err) {
+    console.error("Error connecting to MongoDB", err);
   }
-});
+};
 
-app.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`);
+connectDB();
+
+//Server Connection
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running on ${port}...`);
 });
