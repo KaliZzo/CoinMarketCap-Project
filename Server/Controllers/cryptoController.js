@@ -3,6 +3,8 @@ require("dotenv").config();
 
 exports.cryptoData = async (req, res) => {
   try {
+    console.log("Fetching data from CoinMarketCap API...");
+    console.log("API Key:", process.env.APIKEY ? "Set" : "Not set");
     const response = await axios.get(
       "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest",
       {
@@ -12,7 +14,7 @@ exports.cryptoData = async (req, res) => {
       }
     );
 
-    // שליפת הנתונים הדרושים
+    console.log("Data fetched successfully. Processing...");
     const coinsData = response.data.data.map((coin) => ({
       name: coin.name,
       symbol: coin.symbol,
@@ -26,7 +28,13 @@ exports.cryptoData = async (req, res) => {
       data: coinsData,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch cryptocurrency data" });
+    console.error("Error in cryptoData controller:", err);
+    if (err.response) {
+      console.error("CoinMarketCap API error response:", err.response.data);
+    }
+    res.status(500).json({
+      error: "Failed to fetch cryptocurrency data",
+      details: err.response ? err.response.data : err.message,
+    });
   }
 };

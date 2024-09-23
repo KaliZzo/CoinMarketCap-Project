@@ -1,21 +1,27 @@
-// Packages
 const express = require("express");
 const cors = require("cors");
 const cryptoRouter = require("./Routes/CryptoRoutes.js");
 
-// Express
 const app = express();
 
-// Global Middleware:
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // Allow all origins for now. In production, specify your frontend URL.
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.use((req, res, next) => {
-  console.log("Hello From the Middleware");
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
-// Routes
 app.use("/api/v1/crypto", cryptoRouter);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
 
 module.exports = app;

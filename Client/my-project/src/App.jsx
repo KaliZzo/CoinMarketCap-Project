@@ -1,7 +1,9 @@
+import CryptoDashboard from "../components/MainPage";
+import "./index.css";
 function App() {
   return (
     <>
-      <div className="bg-slate-600">Hello world</div>
+      <CryptoDashboard />
     </>
   );
 }
